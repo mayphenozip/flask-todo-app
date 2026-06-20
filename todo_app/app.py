@@ -18,18 +18,28 @@ def save_tasks(tasks):
 
 tasks = load_tasks()
 
+# Главная страница (показывает ВСЕ задачи)
 @app.route('/')
 def index():
-    return render_template('index.html', tasks=tasks)
+    return render_template('index.html', tasks=tasks, filter_active=False)
+
+# Самостоятельное задание: Маршрут для отображения только активных задач
+@app.route('/active')
+def active_tasks():
+    # Оставляем только те задачи, у которых done == False
+    active = [t for t in tasks if not t.get('done', False)]
+    return render_template('index.html', tasks=active, filter_active=True)
 
 @app.route('/add', methods=['POST'])
 def add_task():
     new_task_text = request.form['task']
     if new_task_text:
         current_date = datetime.now().strftime("%d.%m.%Y %H:%M")
+        # ПР5: Добавляем поле done: False по умолчанию
         task_data = {
             'text': new_task_text,
-            'date': current_date
+            'date': current_date,
+            'done': False
         }
         tasks.append(task_data)
         save_tasks(tasks)
@@ -48,34 +58,35 @@ def clear_all():
     save_tasks(tasks)
     return redirect('/')
 
-# --- ПР4: Маршрут для редактирования задачи ---
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 def edit_task(task_id):
-    # Проверка на существование индекса задачи (из методички)
-    if task_id < 0 or task_id >= len(tasks): [cite: 333]
-        return "Задача не найдена", 404 [cite: 335]
+    if task_id < 0 or task_id >= len(tasks):
+        return "Задача не найдена", 404
     
     task = tasks[task_id]
-    old_text = task['text'] # Запоминаем старый текст для самостоятельного задания 
+    old_text = task['text']
 
-    if request.method == 'POST': [cite: 337]
-        new_text = request.form.get('task', '').strip() [cite: 339]
+    if request.method == 'POST':
+        new_text = request.form.get('task', '').strip()
+        if new_text == '':
+            return render_template('edit.html', task=task, message="Текст не может быть пустым!")
+        if new_text == old_text:
+            return render_template('edit.html', task=task, message="Ничего не изменено")
         
-        # 1. Проверка на пустое поле (из методички)
-        if new_text == '': [cite: 398]
-            return render_template('edit.html', task=task, message="Текст не может быть пустым!") [cite: 399]
-        
-        # 2. ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОГО РЕШЕНИЯ: проверка на отсутствие изменений
-        if new_text == old_text: [cite: 408]
-            return render_template('edit.html', task=task, message="Ничего не изменено") [cite: 408]
-        
-        # Если проверки пройдены, обновляем текст (из методички)
-        tasks[task_id]['text'] = new_text [cite: 345]
-        save_tasks(tasks) [cite: 349]
-        return redirect('/') [cite: 351]
-    
-    else: [cite: 353]
-        return render_template('edit.html', task=task) [cite: 355]
+        tasks[task_id]['text'] = new_text
+        save_tasks(tasks)
+        return redirect('/')
+    else:
+        return render_template('edit.html', task=task)
+
+# --- ПР5: Маршрут переключения статуса выполнения ---
+@app.route('/complete/<int:task_id>')
+def complete_task(task_id):
+    if 0 <= task_id < len(tasks):
+        # Меняем статус на противоположный (True -> False, False -> True)
+        tasks[task_id]['done'] = not tasks[task_id].get('done', False)
+        save_tasks(tasks)
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)
