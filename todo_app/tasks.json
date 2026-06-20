@@ -1,7 +1,20 @@
 [
   {
     "text": "123",
-    "date": "20.06.2026 04:30",
-    "done": true
+    "date": "20.06.2026 04:33",
+    "done": false,
+    "priority": "высокий"
+  },
+  {
+    "text": "4",
+    "date": "20.06.2026 04:33",
+    "done": false,
+    "priority": "низкий"
+  },
+  {
+    "text": "2",
+    "date": "20.06.2026 04:33",
+    "done": false,
+    "priority": "средний"
   }
 ]

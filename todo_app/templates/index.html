@@ -11,13 +11,14 @@
         }
         h1 { color: #0056b3; }
         
-        /* ПР5: Стили для выполненной (зачеркнутой) задачи */
         .done-text { 
             text-decoration: line-through; 
-            color: gray; 
+            color: gray !important; 
         }
         
         ul { list-style: none; padding: 0; }
+        
+        /* Базовые стили карточки задачи */
         li { 
             margin: 10px 0; 
             background: white; 
@@ -26,9 +27,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 600px;
+            max-width: 650px;
         }
+        
+        /* Самостоятельное задание №3: Оформление приоритетов цветом */
+        li.priority-высокий { border-left: 5px solid #dc3545; color: #b21f2d; }
+        li.priority-средний { border-left: 5px solid #ffc107; color: #856404; }
+        li.priority-низкий { border-left: 5px solid #28a745; color: #1e7e34; }
+
         .task-date { font-size: 0.8em; color: gray; margin-left: 10px; }
+        .task-priority-badge { font-weight: bold; font-size: 0.8em; text-transform: uppercase; margin-left: 10px; }
+        
         .actions a { text-decoration: none; margin-left: 10px; }
         .complete-btn { color: #28a745; font-weight: bold; }
         .edit-btn { color: #0056b3; }
@@ -46,36 +55,52 @@
         .clear-btn { background-color: #dc3545; }
         .filter-btn { background-color: #6c757d; }
         .filter-active-btn { background-color: #007bff; }
+        
+        .counters {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            max-width: 630px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
     <h1>Мои задачи</h1>
 
+    <div class="counters">
+        <strong>Статистика приоритетов:</strong> <br>
+        Высоких: {{ tasks | selectattr('priority', 'equalto', 'высокий') | list | length }} | 
+        Средних: {{ tasks | selectattr('priority', 'equalto', 'средний') | list | length }} | 
+        Низких: {{ tasks | selectattr('priority', 'equalto', 'низкий') | list | length }}
+    </div>
+
     <div style="margin-bottom: 10px;">
-        {% if tasks and not filter_active %}
+        {% if tasks and filter_type == 'all' %}
             <a class="btn clear-btn" href="/clear_all">Очистить всё</a>
         {% endif %}
         
-        {% if filter_active %}
-            <a class="btn filter-active-btn" href="/">Показать все задачи</a>
-        {% else %}
-            <a class="btn filter-btn" href="/active">Показать только активные задачи</a>
-        {% endif %}
+        <a class="btn {% if filter_type == 'all' %}filter-active-btn{% else %}filter-btn{% endif %}" href="/">Все задачи</a>
+        <a class="btn {% if filter_type == 'active' %}filter-active-btn{% else %}filter-btn{% endif %}" href="/active">Только активные</a>
+        
+        <a class="btn {% if filter_type == 'priority_active' %}filter-active-btn{% else %}filter-btn{% endif %}" href="/by_priority_active">Активные по приоритету</a>
     </div>
 
     <ul>
     {% for task in tasks %}
-        <li>
+        <li class="priority-{{ task.priority | default('средний') }}">
             <div class="{% if task.done %}done-text{% endif %}">
                 <span>{{ task.text }}</span>
                 <span class="task-date">({{ task.date }})</span>
+                <span class="task-priority-badge">[{{ task.priority | default('средний') }}]</span>
             </div>
             <div class="actions">
-                <a class="complete-btn" href="/complete/{{ loop.index0 }}">
+                <a class="complete-btn" href="/complete/{{ loop.index0 }}?filter_type={{ filter_type }}">
                     {% if task.done %}↩ Отменить{% else %}✅ Выполнено{% endif %}
                 </a>
-                <a class="edit-btn" href="/edit/{{ loop.index0 }}">Редактировать</a>
-                <a class="delete-btn" href="/delete/{{ loop.index0 }}">Удалить</a>
+                <a class="edit-btn" href="/edit/{{ loop.index0 }}?filter_type={{ filter_type }}">Редактировать</a>
+                <a class="delete-btn" href="/delete/{{ loop.index0 }}?filter_type={{ filter_type }}">Удалить</a>
             </div>
         </li>
     {% endfor %}
@@ -83,7 +108,14 @@
 
     <h2>Добавить задачу</h2>
     <form method="POST" action="/add">
-        <input type="text" name="task" placeholder="Новая задача" required>
+        <input type="text" name="task" placeholder="Новая задача" required style="padding: 8px; width: 200px;">
+        
+        <select name="priority" style="padding: 8px; margin: 0 5px;">
+            <option value="высокий">Высокий</option>
+            <option value="средний" selected>Средний</option>
+            <option value="низкий">Низкий</option>
+        </select>
+        
         <button type="submit" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Добавить</button>
     </form>
 </body>

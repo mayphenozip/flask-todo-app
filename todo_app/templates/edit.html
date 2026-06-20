@@ -5,7 +5,7 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f4; }
         h1 { color: #0056b3; }
-        input, button { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        input, select, button { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #ccc; }
         button { background-color: #28a745; color: white; border: none; cursor: pointer; }
         .message { color: #dc3545; font-weight: bold; margin-bottom: 15px; }
         .cancel-link { text-decoration: none; color: #6c757d; margin-left: 10px; }
@@ -14,14 +14,21 @@
 <body>
     <h1>Редактирование задачи</h1>
     
-    {% if message %} [cite: 304]
-        <p class="message">{{ message }}</p> [cite: 402]
-    {% endif %} [cite: 403]
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% endif %}
     
-    <form method="POST"> [cite: 307]
-        <input type="text" name="task" value="{{ task.text }}" required> [cite: 308]
-        <button type="submit">Сохранить</button> [cite: 309]
-        <a class="cancel-link" href="/">Отмена</a> [cite: 310]
+    <form method="POST" action="/edit/{{ request.path.split('/')[-1] }}?filter_type={{ filter_type }}">
+        <input type="text" name="task" value="{{ task.text }}" required>
+        
+        <select name="priority">
+            <option value="высокий" {% if task.priority == 'высокий' %}selected{% endif %}>Высокий</option>
+            <option value="средний" {% if task.priority == 'средний' or not task.priority %}selected{% endif %}>Средний</option>
+            <option value="низкий" {% if task.priority == 'низкий' %}selected{% endif %}>Низкий</option>
+        </select>
+        
+        <button type="submit">Сохранить</button>
+        <a class="cancel-link" href="/">Отмена</a>
     </form>
 </body>
 </html>
