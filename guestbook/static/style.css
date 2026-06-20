@@ -1,0 +1,66 @@
+body { 
+    font-family: Arial, sans-serif; 
+    margin: 40px; 
+    background-color: #f8f9fa; 
+    color: #333; 
+}
+h1 { color: #343a40; }
+
+.form-box { 
+    background: white; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    max-width: 500px; 
+    margin-bottom: 30px; 
+}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+
+.form-group input, .form-group textarea { 
+    width: 100%; 
+    padding: 8px; 
+    box-sizing: border-box; 
+    border: 1px solid #ced4da; 
+    border-radius: 4px; 
+}
+
+/* Задание Г: Красная подсветка для ошибочных пустых полей */
+.input-error { 
+    border: 1px solid red !important; 
+    background-color: #fff5f5; 
+}
+.error-msg {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.btn { 
+    background-color: #007bff; 
+    color: white; 
+    padding: 10px 15px; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+}
+.btn:hover { background-color: #0056b3; }
+
+.msg-card { 
+    background: white; 
+    padding: 15px; 
+    border-radius: 6px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+    max-width: 500px; 
+    margin-bottom: 15px; 
+    border-left: 4px solid #28a745; 
+}
+.msg-header { 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 0.85em; 
+    color: #6c757d; 
+    margin-bottom: 8px; 
+}
+.msg-author { font-weight: bold; color: #495057; }
+.msg-text { font-size: 1em; line-height: 1.4; }
