@@ -26,7 +26,6 @@ def index():
 def add_task():
     new_task_text = request.form['task']
     if new_task_text:
-        # Автоматически проставляем текущую дату (Задание 3*)
         current_date = datetime.now().strftime("%d.%m.%Y %H:%M")
         task_data = {
             'text': new_task_text,
@@ -43,12 +42,40 @@ def delete_task(task_id):
         save_tasks(tasks)
     return redirect('/')
 
-# Кнопка "Очистить всё" (Задание 1)
 @app.route('/clear_all')
 def clear_all():
     tasks.clear()
     save_tasks(tasks)
     return redirect('/')
+
+# --- ПР4: Маршрут для редактирования задачи ---
+@app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
+def edit_task(task_id):
+    # Проверка на существование индекса задачи (из методички)
+    if task_id < 0 or task_id >= len(tasks): [cite: 333]
+        return "Задача не найдена", 404 [cite: 335]
+    
+    task = tasks[task_id]
+    old_text = task['text'] # Запоминаем старый текст для самостоятельного задания 
+
+    if request.method == 'POST': [cite: 337]
+        new_text = request.form.get('task', '').strip() [cite: 339]
+        
+        # 1. Проверка на пустое поле (из методички)
+        if new_text == '': [cite: 398]
+            return render_template('edit.html', task=task, message="Текст не может быть пустым!") [cite: 399]
+        
+        # 2. ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОГО РЕШЕНИЯ: проверка на отсутствие изменений
+        if new_text == old_text: [cite: 408]
+            return render_template('edit.html', task=task, message="Ничего не изменено") [cite: 408]
+        
+        # Если проверки пройдены, обновляем текст (из методички)
+        tasks[task_id]['text'] = new_text [cite: 345]
+        save_tasks(tasks) [cite: 349]
+        return redirect('/') [cite: 351]
+    
+    else: [cite: 353]
+        return render_template('edit.html', task=task) [cite: 355]
 
 if __name__ == '__main__':
     app.run(debug=True)

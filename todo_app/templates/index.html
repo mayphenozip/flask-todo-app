@@ -3,16 +3,13 @@
 <head>
     <title>Список дел</title>
     <style>
-        /* Светло-серый фон страницы и синий заголовок (Задание 2) */
         body { 
             font-family: Arial, sans-serif; 
             margin: 40px; 
             background-color: #f4f4f4; 
             color: #333;
         }
-        h1 { 
-            color: #0056b3; 
-        }
+        h1 { color: #0056b3; }
         ul { list-style: none; padding: 0; }
         li { 
             margin: 10px 0; 
@@ -22,10 +19,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 400px;
+            max-width: 500px;
         }
         .task-date { font-size: 0.8em; color: gray; margin-left: 10px; }
-        .delete-btn { color: red; text-decoration: none; }
+        .actions a { text-decoration: none; margin-left: 10px; }
+        .edit-btn { color: #0056b3; }
+        .delete-btn { color: red; }
         .clear-btn {
             display: inline-block;
             margin-bottom: 20px;
@@ -48,10 +47,13 @@
     {% for task in tasks %}
         <li>
             <div>
-                <span>{{ task.text }}</span> 
-                <span class="task-date">({{ task.date }})</span>
+                <span>{{ task.text }}</span> [cite: 285]
+                <span class="task-date">({{ task.date }})</span> [cite: 285]
             </div>
-            <a class="delete-btn" href="/delete/{{ loop.index0 }}">Удалить</a>
+            <div class="actions">
+                <a class="edit-btn" href="/edit/{{ loop.index0 }}">Редактировать</a> 
+                <a class="delete-btn" href="/delete/{{ loop.index0 }}">Удалить</a> [cite: 287]
+            </div>
         </li>
     {% endfor %}
     </ul>
