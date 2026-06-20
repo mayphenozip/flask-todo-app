@@ -17,8 +17,6 @@
         }
         
         ul { list-style: none; padding: 0; }
-        
-        /* Базовые стили карточки задачи */
         li { 
             margin: 10px 0; 
             background: white; 
@@ -30,7 +28,6 @@
             max-width: 650px;
         }
         
-        /* Самостоятельное задание №3: Оформление приоритетов цветом */
         li.priority-высокий { border-left: 5px solid #dc3545; color: #b21f2d; }
         li.priority-средний { border-left: 5px solid #ffc107; color: #856404; }
         li.priority-низкий { border-left: 5px solid #28a745; color: #1e7e34; }
@@ -56,25 +53,38 @@
         .filter-btn { background-color: #6c757d; }
         .filter-active-btn { background-color: #007bff; }
         
-        .counters {
-            background: #e9ecef;
-            padding: 10px;
+        .search-form {
+            margin-bottom: 20px;
+        }
+        .search-input {
+            padding: 8px;
+            width: 250px;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            max-width: 630px;
-            margin-bottom: 15px;
-            font-size: 0.9em;
+        }
+        .search-submit {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-reset {
+            background-color: #6c757d;
         }
     </style>
 </head>
 <body>
     <h1>Мои задачи</h1>
 
-    <div class="counters">
-        <strong>Статистика приоритетов:</strong> <br>
-        Высоких: {{ tasks | selectattr('priority', 'equalto', 'высокий') | list | length }} | 
-        Средних: {{ tasks | selectattr('priority', 'equalto', 'средний') | list | length }} | 
-        Низких: {{ tasks | selectattr('priority', 'equalto', 'низкий') | list | length }}
-    </div>
+    <form action="/search" method="get" class="search-form">
+        <input type="text" name="query" placeholder="Поиск задач..." class="search-input" value="{{ search_query or '' }}">
+        <button type="submit" class="search-submit">Найти</button>
+        {% if filter_type == 'search' %}
+            <a href="/" class="btn search-reset" style="margin-left: 5px; padding: 7px 12px;">Сбросить</a>
+        {% endif %}
+    </form>
 
     <div style="margin-bottom: 10px;">
         {% if tasks and filter_type == 'all' %}
@@ -83,9 +93,14 @@
         
         <a class="btn {% if filter_type == 'all' %}filter-active-btn{% else %}filter-btn{% endif %}" href="/">Все задачи</a>
         <a class="btn {% if filter_type == 'active' %}filter-active-btn{% else %}filter-btn{% endif %}" href="/active">Только активные</a>
-        
         <a class="btn {% if filter_type == 'priority_active' %}filter-active-btn{% else %}filter-btn{% endif %}" href="/by_priority_active">Активные по приоритету</a>
+        
+        <a class="btn {% if filter_type == 'alphabetical' %}filter-active-btn{% else %}filter-btn{% endif %}" href="/alphabetical">По алфавиту</a>
     </div>
+
+    {% if filter_type == 'search' %}
+        <p>Результаты поиска по запросу: <strong>"{{ search_query }}"</strong> (Найдено: {{ tasks|length }})</p>
+    {% endif %}
 
     <ul>
     {% for task in tasks %}
@@ -96,26 +111,26 @@
                 <span class="task-priority-badge">[{{ task.priority | default('средний') }}]</span>
             </div>
             <div class="actions">
-                <a class="complete-btn" href="/complete/{{ loop.index0 }}?filter_type={{ filter_type }}">
+                <a class="complete-btn" href="/complete/{{ loop.index0 }}?filter_type={{ filter_type }}&search_query={{ search_query }}">
                     {% if task.done %}↩ Отменить{% else %}✅ Выполнено{% endif %}
                 </a>
-                <a class="edit-btn" href="/edit/{{ loop.index0 }}?filter_type={{ filter_type }}">Редактировать</a>
-                <a class="delete-btn" href="/delete/{{ loop.index0 }}?filter_type={{ filter_type }}">Удалить</a>
+                <a class="edit-btn" href="/edit/{{ loop.index0 }}?filter_type={{ filter_type }}&search_query={{ search_query }}">Редактировать</a>
+                <a class="delete-btn" href="/delete/{{ loop.index0 }}?filter_type={{ filter_type }}&search_query={{ search_query }}">Удалить</a>
             </div>
         </li>
+    {% else %}
+        <li>Задачи не найдены или список пуст.</li>
     {% endfor %}
     </ul>
 
     <h2>Добавить задачу</h2>
     <form method="POST" action="/add">
         <input type="text" name="task" placeholder="Новая задача" required style="padding: 8px; width: 200px;">
-        
         <select name="priority" style="padding: 8px; margin: 0 5px;">
             <option value="высокий">Высокий</option>
             <option value="средний" selected>Средний</option>
             <option value="низкий">Низкий</option>
         </select>
-        
         <button type="submit" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Добавить</button>
     </form>
 </body>

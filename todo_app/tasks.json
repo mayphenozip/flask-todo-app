@@ -2,18 +2,36 @@
   {
     "text": "123",
     "date": "20.06.2026 04:33",
-    "done": false,
+    "done": true,
     "priority": "высокий"
   },
   {
     "text": "4",
     "date": "20.06.2026 04:33",
-    "done": false,
+    "done": true,
     "priority": "низкий"
   },
   {
     "text": "2",
     "date": "20.06.2026 04:33",
+    "done": true,
+    "priority": "средний"
+  },
+  {
+    "text": "Купить хлеб",
+    "date": "20.06.2026 04:35",
+    "done": false,
+    "priority": "средний"
+  },
+  {
+    "text": "Автомойка",
+    "date": "20.06.2026 04:36",
+    "done": false,
+    "priority": "средний"
+  },
+  {
+    "text": "Борщ",
+    "date": "20.06.2026 04:36",
     "done": false,
     "priority": "средний"
   }
