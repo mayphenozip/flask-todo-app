@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список дел</title>
+    <style>
+        /* Светло-серый фон страницы и синий заголовок (Задание 2) */
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background-color: #f4f4f4; 
+            color: #333;
+        }
+        h1 { 
+            color: #0056b3; 
+        }
+        ul { list-style: none; padding: 0; }
+        li { 
+            margin: 10px 0; 
+            background: white; 
+            padding: 10px; 
+            border-radius: 4px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 400px;
+        }
+        .task-date { font-size: 0.8em; color: gray; margin-left: 10px; }
+        .delete-btn { color: red; text-decoration: none; }
+        .clear-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: white;
+            background-color: #dc3545;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Мои задачи</h1>
+
+    {% if tasks %}
+        <a class="clear-btn" href="/clear_all">Очистить всё</a>
+    {% endif %}
+
+    <ul>
+    {% for task in tasks %}
+        <li>
+            <div>
+                <span>{{ task.text }}</span> 
+                <span class="task-date">({{ task.date }})</span>
+            </div>
+            <a class="delete-btn" href="/delete/{{ loop.index0 }}">Удалить</a>
+        </li>
+    {% endfor %}
+    </ul>
+
+    <h2>Добавить задачу</h2>
+    <form method="POST" action="/add">
+        <input type="text" name="task" placeholder="Новая задача" required>
+        <button type="submit">Добавить</button>
+    </form>
+</body>
+</html>
