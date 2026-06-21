@@ -8,6 +8,10 @@
 <body>
     <h1>📖 Гостевая книга</h1>
 
+    <p style="font-size: 1.1em; color: #495057;">
+        Всего отзывов оставлено: <strong>{{ count }}</strong>
+    </p>
+
     <div class="form-box">
         <h3>Оставить сообщение</h3>
         
@@ -32,14 +36,26 @@
         </form>
     </div>
 
-    <h2>Сообщения пользователей</h2>
+    <div style="display: flex; justify-content: space-between; max-width: 500px; align-items: center;">
+        <h2>Сообщения пользователей</h2>
+        {% if messages %}
+            <a href="/delete-all-confirm" style="color: #dc3545; font-size: 0.9em; font-weight: bold; text-decoration: none;">🗑️ Очистить всё</a>
+        {% endif %}
+    </div>
+
     <div class="messages-list">
         {% if messages %}
             {% for msg in messages %}
                 <div class="msg-card">
                     <div class="msg-header">
                         <span class="msg-author">{{ msg['name'] }}</span>
-                        <span>{{ msg['created_at'] }}</span>
+                        <div>
+                            <span>{{ msg['created_at'] }}</span>
+                            <a href="/delete/{{ msg['id'] }}" 
+                               onclick="return confirm('Вы действительно хотите удалить это сообщение от {{ msg['name'] }}?');" 
+                               style="color: #dc3545; text-decoration: none; margin-left: 15px; font-weight: bold;" 
+                               title="Удалить">×</a>
+                        </div>
                     </div>
                     <div class="msg-text">{{ msg['message'] }}</div>
                 </div>
