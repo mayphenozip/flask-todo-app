@@ -46,3 +46,18 @@ def clear_all_messages():
     with get_db() as conn:
         conn.execute('DELETE FROM messages')
         conn.commit()
+
+def get_message_by_id(message_id):
+    # Нужно, чтобы загрузить текст старого сообщения в форму редактирования
+    with get_db() as conn:
+        cursor = conn.execute('SELECT * FROM messages WHERE id = ?', (message_id,))
+        return cursor.fetchone()
+
+def update_message(message_id, name, message):
+    # Сама команда обновления по ТЗ ПР13
+    with get_db() as conn:
+        conn.execute(
+            'UPDATE messages SET name = ?, message = ? WHERE id = ?',
+            (name, message, message_id)
+        )
+        conn.commit()
