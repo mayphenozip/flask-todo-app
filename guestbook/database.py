@@ -7,7 +7,6 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-# ВОТ ЭТА ФУНКЦИЯ ДОЛЖНА БЫТЬ ТУТ:
 def init_db():
     with get_db() as conn:
         conn.execute('''
@@ -33,7 +32,6 @@ def add_message(name, message, created_at):
         )
         conn.commit()
 
-# Функции из ПР11 (убедись, что они тоже на месте)
 def delete_message(message_id):
     with get_db() as conn:
         conn.execute('DELETE FROM messages WHERE id = ?', (message_id,))

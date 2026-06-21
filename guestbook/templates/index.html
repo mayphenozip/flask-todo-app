@@ -6,40 +6,40 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>📖 Гостевая книга</h1>
+    <div style="text-align: right; margin-bottom: 20px;">
+        {% if is_admin %}
+            <span style="color: #28a745; font-weight: bold; margin-right: 15px;">Режим Администратора</span>
+            <a href="/logout" style="color: #dc3545; font-weight: bold; text-decoration: none;">Выйти</a>
+        {% else %}
+            <a href="/login" style="color: #007bff; font-weight: bold; text-decoration: none;">🔒 Войти как админ</a>
+        {% endif %}
+    </div>
 
-    <p style="font-size: 1.1em; color: #495057;">
-        Всего отзывов оставлено: <strong>{{ count }}</strong>
-    </p>
+    <h1>📖 Гостевая книга</h1>
+    <p>Всего отзывов: <strong>{{ count }}</strong></p>
 
     <div class="form-box">
         <h3>Оставить сообщение</h3>
-        
         {% if error %}
             <p class="error-msg">Ошибка: Заполните все поля!</p>
         {% endif %}
-        
         <form action="/add" method="POST" novalidate>
             <div class="form-group">
                 <label>Ваше имя:</label>
-                <input type="text" name="name" value="{{ old_name }}" 
-                       class="{% if error and not old_name %}input-error{% endif %}" 
-                       placeholder="Введите имя">
+                <input type="text" name="name" value="{{ old_name }}" class="{% if error and not old_name %}input-error{% endif %}">
             </div>
             <div class="form-group">
                 <label>Сообщение:</label>
-                <textarea name="message" rows="4" 
-                          class="{% if error and not old_message %}input-error{% endif %}" 
-                          placeholder="Текст сообщения...">{{ old_message }}</textarea>
+                <textarea name="message" rows="4" class="{% if error and not old_message %}input-error{% endif %}">{{ old_message }}</textarea>
             </div>
             <button type="submit" class="btn">Отправить</button>
         </form>
     </div>
 
     <div style="display: flex; justify-content: space-between; max-width: 500px; align-items: center;">
-        <h2>Сообщения пользователей</h2>
-        {% if messages %}
-            <a href="/delete-all-confirm" style="color: #dc3545; font-size: 0.9em; font-weight: bold; text-decoration: none;">🗑️ Очистить всё</a>
+        <h2>Сообщения</h2>
+        {% if messages and is_admin %}
+            <a href="/delete-all-confirm" style="color: #dc3545; font-weight: bold; text-decoration: none;">🗑️ Очистить всё</a>
         {% endif %}
     </div>
 
@@ -51,17 +51,16 @@
                         <span class="msg-author">{{ msg['name'] }}</span>
                         <div>
                             <span>{{ msg['created_at'] }}</span>
-                            <a href="/delete/{{ msg['id'] }}" 
-                               onclick="return confirm('Вы действительно хотите удалить это сообщение от {{ msg['name'] }}?');" 
-                               style="color: #dc3545; text-decoration: none; margin-left: 15px; font-weight: bold;" 
-                               title="Удалить">×</a>
+                            {% if is_admin %}
+                                <a href="/delete/{{ msg['id'] }}" onclick="return confirm('Удалить?');" style="color: #dc3545; text-decoration: none; margin-left: 15px; font-weight: bold;">×</a>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="msg-text">{{ msg['message'] }}</div>
                 </div>
             {% endfor %}
         {% else %}
-            <p>Пока нет сообщений. Будьте первым!</p>
+            <p>Пока нет сообщений.</p>
         {% endif %}
     </div>
 </body>
